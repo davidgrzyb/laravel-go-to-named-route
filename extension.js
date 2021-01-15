@@ -11,10 +11,17 @@ const vscode = require('vscode');
 function activate(context) {
 	let hover = vscode.languages.registerHoverProvider('php', {
 		provideHover(document, position, token) {
-			// console.log(document, position);
-			let linkRange = document.getWordRangeAtPosition(position, `/route\((\"|')(.*?)(\"|')(,|\))/`);
-			if (!linkRange) return
-			return new vscode.Hover(`Click to go to route file ${linkRange}`); 
+			let regex = new RegExp(`route\(([^\)]+)\)`);
+			let range = document.getWordRangeAtPosition(position, regex);
+
+			if (! range) return
+
+			let word = document.getText(range).substring(7, document.getText(range).length - 1);
+
+			return new vscode.Hover({
+				language: "Hello language",
+				value: word
+			});
 		}
 	});
 
